@@ -16,6 +16,24 @@
             var baseUrl = 'http://146.185.154.90:8000/blog/ivan.doe@gmail.com/';
             var $editBtn = $('#edit-profile');
             var $addSubBtn = $('#add-sub');
+            var $sendMsgBtn = $('#send-message');
+
+            var handleErrors = function(error) {
+                console.log(`Request failed: ${JSON.stringify(error)}`);
+            };
+
+            $sendMsgBtn.on('click', function() {
+                var message = $('#message-txt').val();
+                $.ajax({
+                    method: 'POST',
+                    url: baseUrl + 'posts',
+                    data: {
+                        'message': message,
+                    }
+                }).then(function(response) {
+                    console.log("Request is successfull!")
+                }).fail(handleErrors)
+            });
 
             $editBtn.on('click', function(e) {
                 e.preventDefault();
