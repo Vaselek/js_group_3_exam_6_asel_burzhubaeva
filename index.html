@@ -10,141 +10,40 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
-    <!--<script src="index.js"></script>-->
-    <script>
-        $(function() {
-            var baseUrl = 'http://146.185.154.90:8000/blog/ivan.doe@gmail.com/';
-            var $editBtn = $('#edit-profile');
-            var $addSubBtn = $('#add-sub');
-            var $sendMsgBtn = $('#send-message');
-
-            var dateTime;
-            var $messages = $('#messages');
-
-            var handleErrors = function(error) {
-                console.log(`Request failed: ${JSON.stringify(error)}`);
-            };
-
-            var renderMessages = function(response) {
-                console.log(response);
-                if (response.length > 0) {
-                    response.forEach(function (message) {
-                        var message = $(`<div class="well"><p><b>Author: ${message.user.firstName} ${message.user.lastName}</b></p></p><p>Text: ${message.message}</p><p><i>Time: ${new Date(message.datetime)}</i></p></div>`);
-                        $messages.prepend(message);
-                    });
-                    var lastElem = response[response.length - 1];
-                    dateTime = lastElem.datetime;
-                    localStorage.setItem('dateTime', dateTime);
-                };
-            };
-
-            $.ajax({
-                method: 'GET',
-                url: baseUrl + 'posts',
-            }).then(renderMessages).fail(handleErrors);
-
-            setInterval(function() {
-                $.ajax({
-                    method: 'GET',
-                    url: `${baseUrl}posts?datetime=${localStorage.getItem('dateTime')}`
-                }).then(renderMessages).fail(handleErrors);
-            }, 5000);
-
-            $sendMsgBtn.on('click', function() {
-                var message = $('#message-txt').val();
-                $.ajax({
-                    method: 'POST',
-                    url: baseUrl + 'posts',
-                    data: {
-                        'message': message,
-                    }
-                }).then(function(response) {
-                    console.log("Request is successfull!")
-                }).fail(handleErrors)
-            });
-
-            $editBtn.on('click', function(e) {
-                e.preventDefault();
-                this.blur();
-                $('#change-profile').appendTo('body').modal();
-                var $saveBtn = $('#save-profile');
-                $saveBtn.on('click', function() {
-                    var firstName = $('#first-name').val();
-                    var lastName = $('#last-name').val();
-                    $.ajax({
-                        method: 'POST',
-                        url: baseUrl + 'profile',
-                        data: {
-                            'firstName': firstName,
-                            'lastName': lastName
-                        }
-                    }).then(function(response) {
-                        console.log(response)
-                    })
-
-                })
-            });
-            $addSubBtn.on('click', function(e){
-                e.preventDefault();
-                this.blur();
-                $('#subscribe').appendTo('body').modal();
-                var $addEmail = $('#add-email');
-                $addEmail.on('click', function() {
-                    var email = $('#email').val();
-                    console.log(email);
-                    $.ajax({
-                        method: 'POST',
-                        url: baseUrl + 'subscribe',
-                        data: {
-                            'email': email,
-                        }
-                    }).then(function(response) {
-                        console.log(response)
-                    })
-
-                })
-            });
-        });
-    </script>
+    <script src="index.js"></script>
 </head>
 <body>
-
-<div class="container container-fluid text-center">
-
-    <div class="row">
-        <h3>John Doe</h3>
+    <div class="container container-fluid text-center">
+        <div class="row">
+            <h3 id="user-name"></h3>
+        </div>
+        <div class="row">
+            <button type="button" id="edit-profile" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-pencil"></i>Edit profile</button>
+            <button type="button" id="add-sub" class="btn btn-success btn-lg"><i class="glyphicon glyphicon-plus-sign"></i>Follow user</button>
+        </div>
+        <div class="row">
+            <form class="form-inline">Enter message:
+                <input type="text" id="message-txt" class="form-control" size="50">
+                <button type="button" id="send-message" class="btn btn-danger">Send</button>
+            </form>
+        </div>
+        <div class="row" id="messages">
+        </div>
     </div>
-    <div class="row">
-        <button type="button" id="edit-profile" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Edit profile</button>
-        <button type="button" id="add-sub" class="btn btn-success">Follow user</button>
-    </div>
-    <div class="row">
-        <form class="form-inline">Enter message:
-            <input type="text" id="message-txt" class="form-control" size="50">
-            <button type="button" id="send-message" class="btn btn-danger">Send</button>
+    <div class="modal" id="change-profile">
+        <h2>Edit profile</h2>
+        <form class="form-inline">
+            <div>First name: <input type="text" id="first-name" class="form-control" size="30"></div>
+            <div>Last name: <input type="text" id="last-name" class="form-control" size="30"></div>
+            <a type="button" rel="modal:close" id="save-profile" class="btn btn-danger">Save</a>
         </form>
     </div>
-
-    <div class="row" id="messages">
+    <div class="modal" id="subscribe">
+        <h2>Follow user</h2>
+        <form class="form-inline">
+            <div>Email <input type="email" id="email" class="form-control" size="30"></div>
+            <a type="button" rel="modal:close" id="add-email" class="btn btn-danger">Add</a>
+        </form>
     </div>
-</div>
-
-<div class="modal" id="change-profile">
-    <h2>Edit profile</h2>
-    <form class="form-inline">
-        <div>First name: <input type="text" id="first-name" class="form-control" size="30"></div>
-        <div>Last name: <input type="text" id="last-name" class="form-control" size="30"></div>
-        <button type="button" id="save-profile" class="btn btn-danger">Save</button>
-    </form>
-</div>
-
-<div class="modal" id="subscribe">
-    <h2>Follow user</h2>
-    <form class="form-inline">
-        <div>Email <input type="email" id="email" class="form-control" size="30"></div>
-        <button type="button" id="add-email" class="btn btn-danger">Add</button>
-    </form>
-</div>
-
 </body>
 </html>
