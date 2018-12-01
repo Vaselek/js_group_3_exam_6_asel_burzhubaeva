@@ -3,8 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    <!--<script src="index.js"></script>-->
+    <script>
+        $(function() {
+            var baseUrl = 'http://146.185.154.90:8000/blog/ivan.doe@gmail.com/';
+            var $editBtn = $('#edit-profile');
+
+            $editBtn.on('click', function(e) {
+                e.preventDefault();
+                this.blur();
+                $('#change-profile').appendTo('body').modal();
+                var $saveBtn = $('#save-profile');
+                $saveBtn.on('click', function() {
+                    var firstName = $('#first-name').val();
+                    var lastName = $('#last-name').val();
+                    $.ajax({
+                        method: 'POST',
+                        url: baseUrl + 'profile',
+                        data: {
+                            'firstName': firstName,
+                            'lastName': lastName
+                        }
+                    }).then(function(response) {
+                        console.log(response)
+                    })
+
+                })
+            });
+
+        });
+    </script>
 </head>
 <body>
+
+<div class="container container-fluid text-center">
+
+    <div class="row">
+        <h3>John Doe</h3>
+    </div>
+    <div class="row">
+        <button type="button" id="edit-profile" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Edit profile</button>
+        <button type="button" id="add-sub" class="btn btn-success">Follow user</button>
+    </div>
+    <div class="row">
+        <form class="form-inline">Enter message:
+            <input type="text" id="message-txt" class="form-control" size="50">
+            <button type="button" id="send-message" class="btn btn-danger">Send</button>
+        </form>
+    </div>
+
+    <div class="row" id="messages">
+    </div>
+</div>
+
+<div class="modal" id="change-profile">
+    <h2>Edit profile</h2>
+    <form class="form-inline">
+        <div>First name: <input type="text" id="first-name" class="form-control" size="30"></div>
+        <div>Last name: <input type="text" id="last-name" class="form-control" size="30"></div>
+        <button type="button" id="save-profile" class="btn btn-danger">Save</button>
+    </form>
+</div>
+
+<div class="modal" id="subscribe">
+    <h2>Follow user</h2>
+    <form class="form-inline">
+        <div>Email <input type="email" id="email" class="form-control" size="30"></div>
+        <button type="button" id="add-email" class="btn btn-danger">Add</button>
+    </form>
+</div>
 
 </body>
 </html>
