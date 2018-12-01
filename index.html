@@ -15,6 +15,7 @@
         $(function() {
             var baseUrl = 'http://146.185.154.90:8000/blog/ivan.doe@gmail.com/';
             var $editBtn = $('#edit-profile');
+            var $addSubBtn = $('#add-sub');
 
             $editBtn.on('click', function(e) {
                 e.preventDefault();
@@ -30,6 +31,26 @@
                         data: {
                             'firstName': firstName,
                             'lastName': lastName
+                        }
+                    }).then(function(response) {
+                        console.log(response)
+                    })
+
+                })
+            });
+            $addSubBtn.on('click', function(e){
+                e.preventDefault();
+                this.blur();
+                $('#subscribe').appendTo('body').modal();
+                var $addEmail = $('#add-email');
+                $addEmail.on('click', function() {
+                    var email = $('#email').val();
+                    console.log(email);
+                    $.ajax({
+                        method: 'POST',
+                        url: baseUrl + 'subscribe',
+                        data: {
+                            'email': email,
                         }
                     }).then(function(response) {
                         console.log(response)
