@@ -18,9 +18,37 @@
             var $addSubBtn = $('#add-sub');
             var $sendMsgBtn = $('#send-message');
 
+            var dateTime;
+            var $messages = $('#messages');
+
             var handleErrors = function(error) {
                 console.log(`Request failed: ${JSON.stringify(error)}`);
             };
+
+            var renderMessages = function(response) {
+                console.log(response);
+                if (response.length > 0) {
+                    response.forEach(function (message) {
+                        var message = $(`<div class="well"><p><b>Author: ${message.user.firstName} ${message.user.lastName}</b></p></p><p>Text: ${message.message}</p><p><i>Time: ${new Date(message.datetime)}</i></p></div>`);
+                        $messages.prepend(message);
+                    });
+                    var lastElem = response[response.length - 1];
+                    dateTime = lastElem.datetime;
+                    localStorage.setItem('dateTime', dateTime);
+                };
+            };
+
+            $.ajax({
+                method: 'GET',
+                url: baseUrl + 'posts',
+            }).then(renderMessages).fail(handleErrors);
+
+            setInterval(function() {
+                $.ajax({
+                    method: 'GET',
+                    url: `${baseUrl}posts?datetime=${localStorage.getItem('dateTime')}`
+                }).then(renderMessages).fail(handleErrors);
+            }, 5000);
 
             $sendMsgBtn.on('click', function() {
                 var message = $('#message-txt').val();
@@ -76,7 +104,6 @@
 
                 })
             });
-
         });
     </script>
 </head>
