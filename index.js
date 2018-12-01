@@ -80,7 +80,7 @@ $(function() {
             method: 'GET',
             url: `${baseUrl}posts?datetime=${localStorage.getItem('dateTime')}`
         }).then(renderMessages).fail(handleErrors);
-    }, 5000);
+    }, 2000);
     $.ajax({
         method: 'GET',
         url: baseUrl + 'profile',
